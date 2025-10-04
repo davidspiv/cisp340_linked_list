@@ -1,95 +1,29 @@
 #include <fstream>
-#include <iostream>
+#include <string>
 
-struct Node {
-  int value;
-  Node *next = NULL;
+#include "LinkedList.h"
 
-  Node(int value = 0) : value(value) {}
-};
+typedef std::string String;
 
-struct LinkedList {
-  Node *head = new Node;
+const String IN_FILE = "input.txt";
+const String OUT_FILE = "output.txt";
 
-  void insertIncrementally(int value) {
-    Node *curr;
-    Node *prev;
-    curr = prev = head;
-
-    // while (curr) {
-    //   curr->next = prev;
-    //   prev = curr;
-    //   curr = curr->next;
-    // }
+void populateNames(const String& fileName, LinkedList& list) {
+  std::ifstream inFile(fileName);
+  if (!inFile.is_open()) {  // Check if the file opened successfully
+    throw std::runtime_error("'" + fileName +
+                             "' could not be found. Aborting.");
   }
 
-  void clear() {
-    Node *curr;
-    Node *prev;
-    curr = prev = head;
-    while (curr) {
-      prev = curr;
-      curr = curr->next;
-      delete prev;
-    }
+  String line;
+  while (std::getline(inFile, line)) {
+    list.insertLast(line);
   }
-
-  // returns head if lest is only one element long
-  void getPenultimateIndex() {
-    Node *curr = head;
-    while (head && curr->next && curr->next->next) {
-      curr = curr->next;
-    }
-
-    std::cout << curr->value << std::endl;
-  }
-
-  void getMiddleIndex() {
-    Node *fast;
-    Node *slow;
-    fast = slow = head;
-    while (head && fast->next && fast->next->next) {
-      fast = fast->next->next;
-      slow = slow->next;
-    }
-    std::cout << slow->value << std::endl;
-  }
-
-
-  void addNode(int value = 0) {
-    Node *curr = head;
-    while (curr->next) {
-      curr = curr->next;
-    }
-    curr->next = new Node(value);
-  }
-
-  void traverse() { // pass head
-
-    Node *curr = head;
-    while (curr) {
-      std::cout << curr->value << std::endl;
-      curr = curr->next;
-    }
-  }
-
-  void traverse(Node **curr) { // pass current address of head
-    while (*curr) {
-      std::cout << (*curr)->value << std::endl;
-      curr = &(*curr)->next;
-    }
-  }
-};
+}
 
 int main() {
-  LinkedList list = LinkedList();
-  list.addNode(1);
-  list.addNode(2);
-  list.addNode(3);
-  list.addNode(4);
-  list.addNode(5);
-  list.addNode(6);
-  list.insertIncrementally(3);
-  list.traverse();
-  // list.getPenultimateIndex();
+  LinkedList names = LinkedList();
+
+  populateNames(IN_FILE, names);
+  names.print();
 }
