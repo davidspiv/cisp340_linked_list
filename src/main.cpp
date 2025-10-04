@@ -1,29 +1,43 @@
 #include <fstream>
+#include <iostream>
 #include <string>
 
 #include "LinkedList.h"
 
-typedef std::string String;
+std::string const IN_FILE = "input.txt";
+std::string const OUT_FILE = "output.txt";
 
-const String IN_FILE = "input.txt";
-const String OUT_FILE = "output.txt";
+void populateNames(std::string const& fileName, LinkedList& names)
+{
+    std::ifstream inFile(fileName);
+    if (!inFile.is_open()) { // Check if the file opened successfully
+        throw std::runtime_error("'" + fileName + "' could not be found. Aborting.");
+    }
 
-void populateNames(const String& fileName, LinkedList& list) {
-  std::ifstream inFile(fileName);
-  if (!inFile.is_open()) {  // Check if the file opened successfully
-    throw std::runtime_error("'" + fileName +
-                             "' could not be found. Aborting.");
-  }
-
-  String line;
-  while (std::getline(inFile, line)) {
-    list.insertLast(line);
-  }
+    std::string line;
+    while (std::getline(inFile, line)) {
+        names.insert(line);
+    }
 }
 
-int main() {
-  LinkedList names = LinkedList();
+void writeNames(std::string const& fileName, LinkedList const& names)
+{
+    std::ofstream outputFile(fileName);
 
-  populateNames(IN_FILE, names);
-  names.print();
+    if (outputFile.is_open()) {
+        outputFile << names.ascendingAsString() << "=============\n"
+                   << names.descendingAsString() << std::endl;
+    } else {
+        throw std::runtime_error("Unable to create file.");
+    }
+
+    std::cout << "Data written to: " << fileName << std::endl;
+}
+
+int main()
+{
+    LinkedList names = LinkedList();
+
+    populateNames(IN_FILE, names);
+    writeNames(OUT_FILE, names);
 }
